@@ -15,7 +15,7 @@ import java.util.concurrent.Semaphore
 class MainActivity : AppCompatActivity() {
 
 
-    var images =
+    var links =
             arrayOf(
                     "https://upload.wikimedia.org/wikipedia/commons/2/23/Lake_mapourika_NZ.jpeg",
                     "https://dayhikesneardenver.com/wp-content/uploads/2018/05/booth-creek-trail-mountains-and-aspens.jpg",
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
         for (i in 0..3){
 
-            var thread = Thread( MyDownloader(images.get(i), imageViews.get(i)) );
+            var thread = Thread( MyDownloader(links.get(i), imageViews.get(i)) );
             thread.start()
 
         }
