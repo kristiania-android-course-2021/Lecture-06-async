@@ -13,7 +13,7 @@ import java.net.URL
 class MainActivity : AppCompatActivity() {
 
 
-    var images =
+    var links =
             arrayOf(
                     "https://upload.wikimedia.org/wikipedia/commons/2/23/Lake_mapourika_NZ.jpeg",
                     "https://dayhikesneardenver.com/wp-content/uploads/2018/05/booth-creek-trail-mountains-and-aspens.jpg",
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
 
         for (i in 0..3){
-            loadWebImage(images.get(i), imageViews.get(i))
+            loadWebImage(links.get(i), imageViews.get(i))
         }
 
     }
