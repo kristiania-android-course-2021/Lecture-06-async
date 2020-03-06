@@ -1,5 +1,6 @@
 package no.sample.asyncapp
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +10,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.io.BufferedInputStream
 import java.lang.Exception
 import java.net.URL
+import java.util.concurrent.Semaphore
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,9 +37,20 @@ class MainActivity : AppCompatActivity() {
 
 
         for (i in 0..3){
-            loadWebImage(images.get(i), imageViews.get(i))
+
+            var thread = Thread( MyDownloader(images.get(i), imageViews.get(i)) );
+            thread.start()
+
         }
 
+    }
+
+
+    inner class MyDownloader( var link:String ,  var imageView: ImageView)  : Runnable{
+
+        override fun run() {
+            loadWebImage(link, imageView)
+        }
     }
 
 
@@ -53,9 +66,13 @@ class MainActivity : AppCompatActivity() {
 
             var fileSize =conection.contentLength
             val input = BufferedInputStream(url.openStream(), fileSize)
-            var bitmap = BitmapFactory.decodeStream(input)
 
-            imageView.setImageBitmap(bitmap)
+
+            var bitmap = decodeSync(input)
+
+            this@MainActivity.runOnUiThread {
+                imageView.setImageBitmap(bitmap)
+            }
 
         }
         catch (ex:Exception){
@@ -65,5 +82,22 @@ class MainActivity : AppCompatActivity() {
             input?.close()
         }
     }
+
+
+    var semaphore = Semaphore(1)
+
+    private fun decodeSync(input: BufferedInputStream): Bitmap? {
+
+        semaphore.acquire()
+
+        var bitmap = BitmapFactory.decodeStream(input)
+
+        semaphore.release()
+
+        return bitmap;
+    }
+
+
+
 
 }
