@@ -99,8 +99,5 @@ class MainActivity : AppCompatActivity() {
 
         return bitmap;
     }
-
-
-
-
+    
 }
