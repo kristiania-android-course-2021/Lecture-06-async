@@ -2,6 +2,7 @@ package no.sample.asyncapp
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -15,7 +16,7 @@ import java.util.concurrent.Semaphore
 class MainActivity : AppCompatActivity() {
 
 
-    var images =
+    var links =
             arrayOf(
                     "https://upload.wikimedia.org/wikipedia/commons/2/23/Lake_mapourika_NZ.jpeg",
                     "https://dayhikesneardenver.com/wp-content/uploads/2018/05/booth-creek-trail-mountains-and-aspens.jpg",
@@ -37,24 +38,28 @@ class MainActivity : AppCompatActivity() {
 
 
         for (i in 0..3){
-
-            var thread = Thread( MyDownloader(images.get(i), imageViews.get(i)) );
-            thread.start()
-
+            DownloaderAsyncTask(imageViews.get(i)).execute(links.get(i))
         }
 
     }
 
 
-    inner class MyDownloader( var link:String ,  var imageView: ImageView)  : Runnable{
 
-        override fun run() {
-            loadWebImage(link, imageView)
+    inner class DownloaderAsyncTask(var imageView: ImageView) : AsyncTask<String, Int, Bitmap?>(){
+
+        override fun doInBackground(vararg params: String): Bitmap? {
+            return loadWebImage(params.get(0), imageView)
+        }
+
+        override fun onPostExecute(result: Bitmap?) {
+            imageView.setImageBitmap(result)
+            super.onPostExecute(result)
         }
     }
 
 
-    fun loadWebImage(link:String ,  imageView: ImageView){
+
+    fun loadWebImage(link:String ,  imageView: ImageView) : Bitmap?{
 
         var input:BufferedInputStream? = null
 
@@ -68,11 +73,7 @@ class MainActivity : AppCompatActivity() {
             val input = BufferedInputStream(url.openStream(), fileSize)
 
 
-            var bitmap = decodeSync(input)
-
-            this@MainActivity.runOnUiThread {
-                imageView.setImageBitmap(bitmap)
-            }
+            return decodeSync(input)
 
         }
         catch (ex:Exception){
@@ -81,6 +82,8 @@ class MainActivity : AppCompatActivity() {
         finally {
             input?.close()
         }
+
+        return null
     }
 
 
