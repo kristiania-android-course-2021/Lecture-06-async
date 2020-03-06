@@ -42,13 +42,12 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
-
+    
 
     inner class DownloaderAsyncTask(var imageView: ImageView) : AsyncTask<String, Int, Bitmap?>(){
 
         override fun doInBackground(vararg params: String): Bitmap? {
-            return loadWebImage(params.get(0), imageView)
+            return loadWebImage(params.get(0))
         }
 
         override fun onPostExecute(result: Bitmap?) {
@@ -59,7 +58,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    fun loadWebImage(link:String ,  imageView: ImageView) : Bitmap?{
+    fun loadWebImage(link:String) : Bitmap?{
 
         var input:BufferedInputStream? = null
 
