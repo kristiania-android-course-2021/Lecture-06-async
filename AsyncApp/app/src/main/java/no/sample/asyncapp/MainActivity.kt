@@ -12,15 +12,12 @@ import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
-
     var links =
             arrayOf(
                     "https://upload.wikimedia.org/wikipedia/commons/2/23/Lake_mapourika_NZ.jpeg",
                     "https://dayhikesneardenver.com/wp-content/uploads/2018/05/booth-creek-trail-mountains-and-aspens.jpg",
                     "https://dayhikesneardenver.com/wp-content/uploads/2016/02/01-sprague-lake-loop-rocky-mountain-national-park-beaver.jpg",
                     "https://cdn.thecrazytourist.com/wp-content/uploads/2017/10/ccimage-shutterstock_214491958.jpg")
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,12 +31,15 @@ class MainActivity : AppCompatActivity() {
                         imageView4)
 
 
-        for (i in 0..3){
+        for (i in 0..3) // Kotlin loop that will start from index 0 to 3
+        {
             loadWebImage(links.get(i), imageViews.get(i))
         }
 
     }
 
+
+    // LoadWebImage downloads a Image as stream of data and decode the stream into a bitmap object
 
     fun loadWebImage(link:String ,  imageView: ImageView){
 
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
             val conection = url.openConnection()
             conection.connect()
 
-            var fileSize =conection.contentLength
+            var fileSize = conection.contentLength
             val input = BufferedInputStream(url.openStream(), fileSize)
             var bitmap = BitmapFactory.decodeStream(input)
 
