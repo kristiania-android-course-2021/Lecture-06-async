@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.util.Log
 import android.widget.ImageView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -45,14 +47,31 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    var handler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+
+            when( msg.what){
+                0 ->
+                {
+                    var dpack =  msg.obj as DataPacket
+                    dpack.imageView.setImageBitmap(dpack.bitmap)
+
+                    Log.d("Message", msg.toString())
+                }
+            }
+
+        }
+    }
+
 
     inner class MyDownloader( var link:String ,  var imageView: ImageView)  : Runnable{
-
         override fun run() {
             loadWebImage(link, imageView)
         }
     }
 
+    data class DataPacket (var imageView: ImageView, var bitmap: Bitmap?)
 
     fun loadWebImage(link:String ,  imageView: ImageView){
 
@@ -70,9 +89,13 @@ class MainActivity : AppCompatActivity() {
 
             var bitmap = decodeSync(input)
 
-            this@MainActivity.runOnUiThread {
-                imageView.setImageBitmap(bitmap)
-            }
+
+            var msg = Message()
+            msg.what = 0
+            msg.obj = DataPacket(imageView, bitmap)
+
+
+            handler.sendMessage(msg)
 
         }
         catch (ex:Exception){
