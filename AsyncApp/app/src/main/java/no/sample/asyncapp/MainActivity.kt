@@ -15,6 +15,7 @@ import java.util.concurrent.Semaphore
 class MainActivity : AppCompatActivity() {
 
 
+    //An array of string containing links of images
     var links =
             arrayOf(
                     "https://upload.wikimedia.org/wikipedia/commons/2/23/Lake_mapourika_NZ.jpeg",
@@ -24,19 +25,18 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //An array of ImageViews declared in the activity layout
         var imageViews =
                  arrayOf(imageView1,
                         imageView2,
                         imageView3,
                         imageView4)
 
-
-        for (i in 0..3){
+        for (i in 0..3){ // Kotlin loop that will start from index 0 to 3
 
             var thread = Thread( MyDownloader(links.get(i), imageViews.get(i)) );
             thread.start()
@@ -45,8 +45,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
-    inner class MyDownloader( var link:String ,  var imageView: ImageView)  : Runnable{
+    // A runnable implementation that calls loadWebImage
+    inner class MyDownloader( var link:String ,  var imageView: ImageView)  : Runnable {
 
         override fun run() {
             loadWebImage(link, imageView)
@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    // A method that downloads Image and assigns the bitmap into ImageView using runOnUiThread
     fun loadWebImage(link:String ,  imageView: ImageView){
 
         var input:BufferedInputStream? = null
@@ -83,17 +84,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
+    // A semaphore object that can only be acquired by one thread
     var semaphore = Semaphore(1)
-
+    // Synchronized method that applies semaphore to ensure single thread access at any given time
     private fun decodeSync(input: BufferedInputStream): Bitmap? {
 
         semaphore.acquire()
-
         var bitmap = BitmapFactory.decodeStream(input)
-
         semaphore.release()
-
         return bitmap;
     }
 
