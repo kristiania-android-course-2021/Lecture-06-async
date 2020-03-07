@@ -5,7 +5,7 @@ This is a code sample to teach concepts of the threading and async programmimg. 
 
 |Branches|Details|
 |-------|--------|
-|Master| Code with the latest code|
+|Master| Branch with the latest code|
 |live| Use the live code branch to use during the class session|
 |thread| Use of threads to download images and use of runOnUiThread to communicate back to UI thread|
 |asyctask|Use of AsyncTask for downloading images and update the UI |
