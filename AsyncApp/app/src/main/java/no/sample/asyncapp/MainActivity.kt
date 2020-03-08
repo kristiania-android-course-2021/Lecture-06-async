@@ -49,7 +49,14 @@ class MainActivity : AppCompatActivity() {
     inner class MyDownloader( var link:String ,  var imageView: ImageView)  : Runnable {
 
         override fun run() {
-            loadWebImage(link, imageView)
+            try
+            {
+                loadWebImage(link, imageView)
+            }
+            catch ( ex : InterruptedException)
+            {
+                Log.e(MyDownloader::javaClass.name, ex.toString())
+            }
         }
     }
 
