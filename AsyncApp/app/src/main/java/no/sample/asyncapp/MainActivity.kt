@@ -2,11 +2,9 @@ package no.sample.asyncapp
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageView
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.BufferedInputStream
 import java.lang.Exception
@@ -24,10 +22,9 @@ class MainActivity : AppCompatActivity() {
                     "https://cdn.thecrazytourist.com/wp-content/uploads/2017/10/ccimage-shutterstock_214491958.jpg")
 
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
 
         var imageViews =
@@ -37,38 +34,22 @@ class MainActivity : AppCompatActivity() {
                         imageView4)
 
 
-        for (i in 0..3){
-            DownloaderAsyncTask(imageViews.get(i)).execute(links.get(i))
-        }
-
-    }
-    
-
-    inner class DownloaderAsyncTask(var imageView: ImageView) : AsyncTask<String, Int, Bitmap?>(){
-
-        override fun doInBackground(vararg params: String): Bitmap? {
-            return loadWebImage(params.get(0))
-        }
-
-        override fun onPostExecute(result: Bitmap?) {
-            imageView.setImageBitmap(result)
-            super.onPostExecute(result)
-        }
     }
 
 
 
-    fun loadWebImage(link:String) : Bitmap?{
+    // loadWebImage downloads and returns the Bitmap
+    fun loadWebImage(link:String) : Bitmap? {
 
         var input:BufferedInputStream? = null
 
         try {
             val url = URL(link)
 
-            val conection = url.openConnection()
-            conection.connect()
+            val connection = url.openConnection()
+            connection.connect()
 
-            var fileSize =conection.contentLength
+            var fileSize = connection.contentLength
             val input = BufferedInputStream(url.openStream(), fileSize)
 
 
@@ -86,15 +67,14 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    var semaphore = Semaphore(1)
+    var semaphore = Semaphore(1) // A semaphore which only permits one thread to execute the code.
 
     private fun decodeSync(input: BufferedInputStream): Bitmap? {
-
-        semaphore.acquire()
+        semaphore.acquire() // Only one thread will acquire it
 
         var bitmap = BitmapFactory.decodeStream(input)
 
-        semaphore.release()
+        semaphore.release() // semaphore is released
 
         return bitmap;
     }
