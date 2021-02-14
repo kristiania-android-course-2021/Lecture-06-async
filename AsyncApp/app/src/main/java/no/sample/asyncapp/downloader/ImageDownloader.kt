@@ -16,6 +16,8 @@ class ImageDownloader() {
 
     var semaphore = Semaphore(1)
 
+     var sharedCounter = ThreadSafeCounter()
+
     fun download (link: String, imageView: ImageView){
         var thread = Thread( DownloadTask(link, imageView) )
         thread.start()
@@ -24,14 +26,21 @@ class ImageDownloader() {
     inner class DownloadTask( var link:String ,  var imageView: ImageView)  : Runnable {
         override fun run() {
 
+            sharedCounter.countMe()
+
             var bitmap = getDownloadBitmap(link)
             var msg = Message()
             msg.what = 0
             msg.obj = DataPacket(imageView, bitmap)
 
             handler.sendMessage(msg)
+
+            sharedCounter.deCountMe()
+
+            Log.i("ThreadCount", "Thread counter ${sharedCounter.counter}")
         }
     }
+
 
 
 
@@ -43,8 +52,13 @@ class ImageDownloader() {
             when( msg.what){
                 0 ->
                 {
+
                     var dpack =  msg.obj as DataPacket
-                    dpack.imageView.setImageBitmap(dpack.bitmap)
+                    try {
+                        dpack.imageView.setImageBitmap(dpack.bitmap)
+                    }catch (ex: Exception){
+                        ex.printStackTrace()
+                    }
 
                     Log.d("Message", msg.toString())
                 }
@@ -80,9 +94,7 @@ class ImageDownloader() {
     private fun decodeSync(input: BufferedInputStream): Bitmap? {
 
         semaphore.acquire()
-
         var bitmap = BitmapFactory.decodeStream(input)
-
         semaphore.release()
 
         return bitmap;
