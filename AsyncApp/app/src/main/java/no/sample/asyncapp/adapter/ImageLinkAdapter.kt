@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import no.sample.asyncapp.R
 import no.sample.asyncapp.databinding.ImageItemBinding
 import no.sample.asyncapp.downloader.ImageDownloader
@@ -31,8 +32,8 @@ class ImageLinkAdapter(private val list: Array<String>) : RecyclerView.Adapter<I
     {
 
         fun bind( link: String) {
-            binding.imageView.setImageResource(R.drawable.ic_downloading_black_48dp)
-            downloader.download(link, binding.imageView)
+
+            Picasso.get().load(link).placeholder(R.drawable.ic_downloading_black_48dp).into(binding.imageView)
         }
 
     }
